@@ -11,7 +11,7 @@ class TimerView extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text()
+            // Text()
           ],
         ),
       ),
