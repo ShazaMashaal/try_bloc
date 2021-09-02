@@ -17,14 +17,8 @@ class LoginConfirmButton extends StatelessWidget {
       state is LoginLoading
           ? CupertinoActivityIndicator()
           : ElevatedButton(
-        onPressed:() {  controller.loginAndSignup("signInWithPassword");
-        if(state is ShowSnack) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Yay! A SnackBar!')));
-        }
-        else{
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CounterView()));
-        }
+        onPressed:() {  controller.loginAndSignup("signInWithPassword",context);
+
         },
         child: Text('Login'),
       ),

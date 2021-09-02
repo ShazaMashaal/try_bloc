@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:try_bloc/shared/shared_helper.dart';
+import 'package:try_bloc/views/counter/view.dart';
+import 'package:try_bloc/views/home/view.dart';
 import 'package:try_bloc/views/login/states.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
@@ -13,7 +16,7 @@ class LoginCubit extends Cubit<LoginStates> {
 
   final formKey = GlobalKey<FormState>();
 
-  Future<void> loginAndSignup(String method)async{
+  Future<void> loginAndSignup(String method,contxt)async{
     if(!formKey.currentState.validate()) return;
     emit(LoginLoading());
 
@@ -23,15 +26,25 @@ class LoginCubit extends Cubit<LoginStates> {
       });
 
     try{
-      final response = await Dio().post('https://identitytoolkit.googleapis.com/v1/accounts:$method?key=AIzaSyBjb3KDPB9yEV6Nh8QaC8eeG1Qq9TA1Djo',data: formData);
+      final response = await Dio().post('https://identitytoolkit.googleapis.com/v1/accounts:$method?key=AIzaSyBjb3KDPB9yEV6Nh8QaC8eeG1Qq9TA1Djo',data: formData,
+          options: Options(
+              followRedirects: false,
+              validateStatus: (status) {
+                return status < 500;
+              })
+              );
       final data = response.data as Map;
       if(data.containsKey('message'))
 
-      emit(ShowSnack());
+        ScaffoldMessenger.of(contxt).showSnackBar(
+            SnackBar(content: Text('Error!')));
+      else{
+        SharedHelper.setId(data["idToken"]);
+        Navigator.push(
+          contxt,
+          MaterialPageRoute(builder: (context) => CharactersList()));
+      }
 
-      else
-
-      emit(GoToHome());
 
     }catch(e, s){
       print(e);
